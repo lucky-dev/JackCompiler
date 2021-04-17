@@ -1,0 +1,282 @@
+class Game {
+
+  field GameField gameField;
+  field int pieceId;
+  field boolean quit;
+  field boolean forceQuit;
+  field int totalScore;
+
+  constructor Game new() {
+    let gameField = GameField.new();
+
+    let pieceId = 0;
+    let quit = false;
+    let forceQuit = false;
+    let totalScore = 0;
+
+    return this;
+  }
+
+  method void run() {
+    var int key;
+    var int oldKey;
+    var int i;
+    var int score;
+    var int newPieceId;
+
+    do drawInfo(0, pieceId, false);
+
+    do gameField.createPiece(pieceId);
+
+    let oldKey = 0;
+
+    while ((~quit) & (~forceQuit)) {
+      do gameField.draw();
+
+      let i = 0;
+
+      while (i < 10000) {
+        let key = Keyboard.keyPressed();
+
+        if (~(key = oldKey)) {            
+          if (handleKey(key)) {
+            do gameField.draw();
+          }
+
+          let oldKey = key;
+        }
+
+        let i = i + 1;
+      }
+
+      if (~(gameField.moveDown(false))) {
+        do gameField.leavePiece();
+
+        let score = gameField.handleCompletedRows();
+        let newPieceId = generateNewPieceId();
+        
+        if (gameField.createPiece(newPieceId)) {
+          do drawInfo(score, newPieceId, false);
+        } else {
+          let quit = true;
+
+          do drawInfo(score, newPieceId, true);
+        }
+      }
+    }
+
+    if (forceQuit) {
+      do gameField.clearGameField();
+      do gameField.draw();
+      do Screen.setColor(false);
+      do Screen.drawRectangle(0, 60, 188, 125);
+    }
+
+    return;
+  }
+
+  method void drawInfo(int newScore, int newPieceId, boolean userLoses) {
+    var int xOffset;
+    var int yOffset;
+    var String label;
+
+    do Screen.setColor(false);
+    do Screen.drawRectangle(0, 60, 188, 125);
+
+    do Screen.setColor(true);
+
+    if (userLoses) {
+      do Output.moveCursor(6, 6);
+      
+      let label = "You lose :(";
+      do Output.printString(label);
+      do label.dispose();
+    } else {
+      if ((totalScore + newScore) > 9999) {
+        let totalScore = (totalScore + newScore) - 9999;
+      } else {
+        let totalScore = totalScore + newScore;
+      }
+
+      do Output.moveCursor(6, 2);
+      
+      let label = "Score: ";
+      do Output.printString(label);
+      do label.dispose();
+
+      do Output.printInt(totalScore);
+
+      if ((newPieceId + 1) = 7) {
+        let newPieceId = 0;
+      } else {
+        let newPieceId = newPieceId + 1;
+      }
+    }
+
+    do Output.moveCursor(9, 2);
+    
+    let label = "Next piece: ";
+    do Output.printString(label);
+    do label.dispose();
+    
+    if (newPieceId = 0) {
+      let xOffset = 110;
+      let yOffset = 100;
+
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+      
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+    }
+
+    if (newPieceId = 1) {
+      let xOffset = 110;
+      let yOffset = 95;
+
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+      
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let yOffset = yOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+    }
+
+    if (newPieceId = 2) {
+      let xOffset = 110;
+      let yOffset = 95;
+
+      let yOffset = yOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let yOffset = 95;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+      
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+    }
+
+    if (newPieceId = 3) {
+      let xOffset = 110;
+      let yOffset = 95;
+
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+      
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let xOffset = 110;
+      let yOffset = yOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+    }
+
+    if (newPieceId = 4) {
+      let xOffset = 110;
+      let yOffset = 95;
+
+      let yOffset = yOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let yOffset = 95;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+      
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+    }
+
+    if (newPieceId = 5) {
+      let xOffset = 110;
+      let yOffset = 95;
+
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+      
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let yOffset = yOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let yOffset = 95;
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+    }
+
+    if (newPieceId = 6) {
+      let xOffset = 110;
+      let yOffset = 95;
+
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+      
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let yOffset = yOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+
+      let xOffset = xOffset + 8;
+      do Screen.drawRectangle(xOffset, yOffset, xOffset + 6, yOffset + 6);
+    }
+
+    return;
+  }
+
+  method boolean handleKey(int key) {
+    if (key = 130) { // Left arrow
+      return gameField.moveLeft();
+    }
+
+    if (key = 132) { // Right arrow
+      return gameField.moveRight();
+    }
+
+    if (key = 131) { // Up arrow
+      return gameField.rotate();
+    }
+
+    if (key = 133) { // Down arrow
+      return gameField.moveDown(true);
+    }
+
+    if (key = 81) { // Q
+      let forceQuit = true;
+    }
+
+    return false;
+  }
+
+  method int generateNewPieceId() {
+    if ((pieceId + 1) = 7) {
+      let pieceId = 0;
+    } else {
+      let pieceId = pieceId + 1;
+    }
+
+    return pieceId;
+  }
+
+  method void dispose() {
+    do gameField.dispose();
+    do Memory.deAlloc(this);
+
+    return;
+  }
+
+}

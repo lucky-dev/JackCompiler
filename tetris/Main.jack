@@ -1,0 +1,57 @@
+class Main {
+
+  function void main() {
+    var Game game;
+    var int key;
+    var int oldKey;
+
+    do Screen.setColor(true);
+
+    do Screen.drawLine(190, 0, 190, 255);
+    do Screen.drawLine(320, 0, 320, 255);
+
+    do Output.moveCursor(1, 7);
+    do Output.printString("********");
+    do Output.moveCursor(2, 7);
+    do Output.printString("*TETRIS*");
+    do Output.moveCursor(3, 7);
+    do Output.printString("********");
+    do Output.moveCursor(12, 2);
+    do Output.printString("Q - quit");
+    do Output.moveCursor(13, 2);
+    do Output.printString("N - new game");
+    do Output.moveCursor(14, 2);
+    do Output.printString("");
+    do Output.moveCursor(15, 2);
+    do Output.printString("Arrow:");
+    do Output.moveCursor(16, 2);
+    do Output.printString("");
+    do Output.moveCursor(17, 2);
+    do Output.printString("Up - rotate");
+    do Output.moveCursor(18, 2);
+    do Output.printString("Left - move left");
+    do Output.moveCursor(19, 2);
+    do Output.printString("Right - move right");
+    do Output.moveCursor(20, 2);
+    do Output.printString("Down - speed up");
+
+    let oldKey = 0;
+
+    while (true) {
+      let key = Keyboard.keyPressed();
+
+      if (~(oldKey = key)) {
+        if (key = 78) { // N
+          let game = Game.new();
+          do game.run();
+          do game.dispose();
+        }
+
+        let oldKey = key;
+      }
+    }
+    
+    return;
+  }
+
+}

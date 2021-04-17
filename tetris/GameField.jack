@@ -1,0 +1,599 @@
+class GameField {
+
+  // I = 0
+  // J = 1
+  // L = 2
+  // O = 3
+  // S = 4
+  // T = 5
+  // Z = 6
+
+  field int typePiece;
+  field Array matrix;
+  field int pivotBlockX, pivotBlockY;
+  field int block2X, block2Y;
+  field int block3X, block3Y;
+  field int block4X, block4Y;
+  field int rotatePosition;
+
+  constructor GameField new() {
+    var int i;
+
+    let pivotBlockX = 0;
+    let pivotBlockY = 0;
+    let block2X = 0;
+    let block2Y = 0;
+    let block3X = 0;
+    let block3Y = 0;
+    let block4X = 0;
+    let block4Y = 0;
+    let rotatePosition = 0;
+    let typePiece = 0;
+
+    let matrix = Array.new(18);
+
+    while (i < 18) {
+      let matrix[i] = Array.new(8);
+      let i = i + 1;
+    }
+
+    do clearGameField();
+
+    return this;
+  }
+
+  method void clearGameField() {
+    var int i;
+    var int j;
+    var Array row;
+
+    let i = 0;
+
+    while (i < 18) {
+      let row = matrix[i];
+      let j = 0;
+
+      while (j < 8) {
+        let row[j] = 0;
+        let j = j + 1;
+      }
+
+      let i = i + 1;
+    }
+
+    return;
+  }
+
+  method boolean createPiece(int _typePiece) {
+    let typePiece = _typePiece;
+
+    let rotatePosition = 0;
+
+    let pivotBlockX = 4;
+    let pivotBlockY = 2;
+
+    return canPutPiece(rotatePosition);
+  }
+
+  method boolean moveLeft() {
+    var boolean leftMove;
+
+    let leftMove = canMove(pivotBlockX - 1, pivotBlockY, block2X - 1, block2Y, block3X - 1, block3Y, block4X - 1, block4Y);
+
+    if (leftMove) {
+      do setValueForCell(pivotBlockX, pivotBlockY, block2X, block2Y, block3X, block3Y, block4X, block4Y, 0);
+
+      let pivotBlockX = pivotBlockX - 1;
+      let block2X = block2X - 1;
+      let block3X = block3X - 1;
+      let block4X = block4X - 1;
+
+      do setValueForCell(pivotBlockX, pivotBlockY, block2X, block2Y, block3X, block3Y, block4X, block4Y, 1);
+    }
+
+    return leftMove;
+  }
+
+  method boolean moveRight() {
+    var boolean rightMove;
+
+    let rightMove = canMove(pivotBlockX + 1, pivotBlockY, block2X + 1, block2Y, block3X + 1, block3Y, block4X + 1, block4Y);
+
+    if (rightMove) {
+      do setValueForCell(pivotBlockX, pivotBlockY, block2X, block2Y, block3X, block3Y, block4X, block4Y, 0);
+
+      let pivotBlockX = pivotBlockX + 1;
+      let block2X = block2X + 1;
+      let block3X = block3X + 1;
+      let block4X = block4X + 1;
+
+      do setValueForCell(pivotBlockX, pivotBlockY, block2X, block2Y, block3X, block3Y, block4X, block4Y, 1);
+    }
+
+    return rightMove;
+  }
+
+  method boolean rotate() {
+    var int newRotatePosition;
+    
+    let newRotatePosition = rotatePosition;
+
+    if ((newRotatePosition + 1) = 4) {
+      let newRotatePosition = 0;
+    } else {
+      let newRotatePosition = newRotatePosition + 1;
+    }
+
+    return canPutPiece(newRotatePosition);
+  }
+
+  method boolean canPutPiece(int _rotatePosition) {
+    var boolean movePiece;
+    var int newPivotBlockX;
+    var int newPivotBlockY;
+    var int newBlock2X;
+    var int newBlock2Y;
+    var int newBlock3X;
+    var int newBlock3Y;
+    var int newBlock4X;
+    var int newBlock4Y;
+
+    if (typePiece = 0) {
+      if ((_rotatePosition = 0) | (_rotatePosition = 2)) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX - 2;
+        let newBlock2Y = pivotBlockY;
+        let newBlock3X = pivotBlockX - 1;
+        let newBlock3Y = pivotBlockY;
+        let newBlock4X = pivotBlockX + 1;
+        let newBlock4Y = pivotBlockY;
+      }
+
+      if ((_rotatePosition = 1) | (_rotatePosition = 3)) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX;
+        let newBlock2Y = pivotBlockY - 2;
+        let newBlock3X = pivotBlockX;
+        let newBlock3Y = pivotBlockY - 1;
+        let newBlock4X = pivotBlockX;
+        let newBlock4Y = pivotBlockY + 1;
+      }
+    }
+
+    if (typePiece = 1) {
+      if (_rotatePosition = 0) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX - 1;
+        let newBlock2Y = pivotBlockY;
+        let newBlock3X = pivotBlockX + 1;
+        let newBlock3Y = pivotBlockY;
+        let newBlock4X = pivotBlockX + 1;
+        let newBlock4Y = pivotBlockY + 1;
+      }
+
+      if (_rotatePosition = 1) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX;
+        let newBlock2Y = pivotBlockY - 1;
+        let newBlock3X = pivotBlockX;
+        let newBlock3Y = pivotBlockY + 1;
+        let newBlock4X = pivotBlockX - 1;
+        let newBlock4Y = pivotBlockY + 1;
+      }
+
+      if (_rotatePosition = 2) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX - 1;
+        let newBlock2Y = pivotBlockY;
+        let newBlock3X = pivotBlockX + 1;
+        let newBlock3Y = pivotBlockY;
+        let newBlock4X = pivotBlockX - 1;
+        let newBlock4Y = pivotBlockY - 1;
+      }
+
+      if (_rotatePosition = 3) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX;
+        let newBlock2Y = pivotBlockY - 1;
+        let newBlock3X = pivotBlockX;
+        let newBlock3Y = pivotBlockY + 1;
+        let newBlock4X = pivotBlockX + 1;
+        let newBlock4Y = pivotBlockY - 1;
+      }
+    }
+
+    if (typePiece = 2) {
+      if (_rotatePosition = 0) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX - 1;
+        let newBlock2Y = pivotBlockY;
+        let newBlock3X = pivotBlockX + 1;
+        let newBlock3Y = pivotBlockY;
+        let newBlock4X = pivotBlockX - 1;
+        let newBlock4Y = pivotBlockY + 1;
+      }
+
+      if (_rotatePosition = 1) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX;
+        let newBlock2Y = pivotBlockY - 1;
+        let newBlock3X = pivotBlockX;
+        let newBlock3Y = pivotBlockY + 1;
+        let newBlock4X = pivotBlockX - 1;
+        let newBlock4Y = pivotBlockY - 1;
+      }
+
+      if (_rotatePosition = 2) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX - 1;
+        let newBlock2Y = pivotBlockY;
+        let newBlock3X = pivotBlockX + 1;
+        let newBlock3Y = pivotBlockY;
+        let newBlock4X = pivotBlockX + 1;
+        let newBlock4Y = pivotBlockY - 1;
+      }
+
+      if (_rotatePosition = 3) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX;
+        let newBlock2Y = pivotBlockY - 1;
+        let newBlock3X = pivotBlockX;
+        let newBlock3Y = pivotBlockY + 1;
+        let newBlock4X = pivotBlockX + 1;
+        let newBlock4Y = pivotBlockY + 1;
+      }
+    }
+
+    if (typePiece = 3) {
+      let newPivotBlockX = pivotBlockX;
+      let newPivotBlockY = pivotBlockY;
+      let newBlock2X = pivotBlockX - 1;
+      let newBlock2Y = pivotBlockY;
+      let newBlock3X = pivotBlockX;
+      let newBlock3Y = pivotBlockY + 1;
+      let newBlock4X = pivotBlockX - 1;
+      let newBlock4Y = pivotBlockY + 1;
+    }
+
+    if (typePiece = 4) {
+      if ((_rotatePosition = 0) | (_rotatePosition = 2)) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX;
+        let newBlock2Y = pivotBlockY + 1;
+        let newBlock3X = pivotBlockX + 1;
+        let newBlock3Y = pivotBlockY;
+        let newBlock4X = pivotBlockX - 1;
+        let newBlock4Y = pivotBlockY + 1;
+      }
+
+      if ((_rotatePosition = 1) | (_rotatePosition = 3)) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX;
+        let newBlock2Y = pivotBlockY - 1;
+        let newBlock3X = pivotBlockX + 1;
+        let newBlock3Y = pivotBlockY;
+        let newBlock4X = pivotBlockX + 1;
+        let newBlock4Y = pivotBlockY + 1;
+      }
+    }
+
+    if (typePiece = 5) {
+      if (_rotatePosition = 0) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX - 1;
+        let newBlock2Y = pivotBlockY;
+        let newBlock3X = pivotBlockX + 1;
+        let newBlock3Y = pivotBlockY;
+        let newBlock4X = pivotBlockX;
+        let newBlock4Y = pivotBlockY + 1;
+      }
+
+      if (_rotatePosition = 1) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX;
+        let newBlock2Y = pivotBlockY - 1;
+        let newBlock3X = pivotBlockX;
+        let newBlock3Y = pivotBlockY + 1;
+        let newBlock4X = pivotBlockX - 1;
+        let newBlock4Y = pivotBlockY;
+      }
+
+      if (_rotatePosition = 2) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX - 1;
+        let newBlock2Y = pivotBlockY;
+        let newBlock3X = pivotBlockX + 1;
+        let newBlock3Y = pivotBlockY;
+        let newBlock4X = pivotBlockX;
+        let newBlock4Y = pivotBlockY - 1;
+      }
+
+      if (_rotatePosition = 3) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX;
+        let newBlock2Y = pivotBlockY - 1;
+        let newBlock3X = pivotBlockX;
+        let newBlock3Y = pivotBlockY + 1;
+        let newBlock4X = pivotBlockX + 1;
+        let newBlock4Y = pivotBlockY;
+      }
+    }
+
+    if (typePiece = 6) {
+      if ((_rotatePosition = 0) | (_rotatePosition = 2)) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX;
+        let newBlock2Y = pivotBlockY + 1;
+        let newBlock3X = pivotBlockX - 1;
+        let newBlock3Y = pivotBlockY;
+        let newBlock4X = pivotBlockX + 1;
+        let newBlock4Y = pivotBlockY + 1;
+      }
+
+      if ((_rotatePosition = 1) | (_rotatePosition = 3)) {
+        let newPivotBlockX = pivotBlockX;
+        let newPivotBlockY = pivotBlockY;
+        let newBlock2X = pivotBlockX + 1;
+        let newBlock2Y = pivotBlockY - 1;
+        let newBlock3X = pivotBlockX + 1;
+        let newBlock3Y = pivotBlockY;
+        let newBlock4X = pivotBlockX;
+        let newBlock4Y = pivotBlockY + 1;
+      }
+    }
+
+    let movePiece = canMove(newPivotBlockX, newPivotBlockY, newBlock2X, newBlock2Y, newBlock3X, newBlock3Y, newBlock4X, newBlock4Y);
+    
+    if (movePiece) {
+      let rotatePosition = _rotatePosition;
+
+      do setValueForCell(pivotBlockX, pivotBlockY, block2X, block2Y, block3X, block3Y, block4X, block4Y, 0);
+
+      let pivotBlockX = newPivotBlockX;
+      let pivotBlockY = newPivotBlockY;
+      let block2X = newBlock2X;
+      let block2Y = newBlock2Y;
+      let block3X = newBlock3X;
+      let block3Y = newBlock3Y;
+      let block4X = newBlock4X;
+      let block4Y = newBlock4Y;
+
+      do setValueForCell(pivotBlockX, pivotBlockY, block2X, block2Y, block3X, block3Y, block4X, block4Y, 1);
+    }
+
+    return movePiece;
+  }
+
+  method boolean moveDown(boolean speedUp) {
+    var boolean downMove;
+    var boolean speedUp;
+    var int newPivotBlockY;
+    var int newBlock2Y;
+    var int newBlock3Y;
+    var int newBlock4Y;
+
+    if (speedUp) {
+      let newPivotBlockY = pivotBlockY + 2;
+      let newBlock2Y = block2Y + 2;
+      let newBlock3Y = block3Y + 2;
+      let newBlock4Y = block4Y + 2;
+    } else {
+      let newPivotBlockY = pivotBlockY + 1;
+      let newBlock2Y = block2Y + 1;
+      let newBlock3Y = block3Y + 1;
+      let newBlock4Y = block4Y + 1;
+    }
+
+    let downMove = canMove(pivotBlockX, newPivotBlockY, block2X, newBlock2Y, block3X, newBlock3Y, block4X, newBlock4Y);
+
+    if (downMove) {
+      do setValueForCell(pivotBlockX, pivotBlockY, block2X, block2Y, block3X, block3Y, block4X, block4Y, 0);
+
+      let pivotBlockY = newPivotBlockY;
+      let block2Y = newBlock2Y;
+      let block3Y = newBlock3Y;
+      let block4Y = newBlock4Y;
+
+      do setValueForCell(pivotBlockX, pivotBlockY, block2X, block2Y, block3X, block3Y, block4X, block4Y, 1);
+    }
+
+    return downMove;
+  }
+
+  method boolean canMove(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
+    var Array row;
+
+    if ((x1 > 7) | (x1 < 0) | (x2 > 7) | (x2 < 0) | (x3 > 7) | (x3 < 0) | (x4 > 7) | (x4 < 0)) {
+      return false;
+    }
+
+    if ((y1 > 17) | (y1 > 17) | (y2 > 17) | (y2 > 17) | (y3 > 17) | (y3 > 17) | (y4 > 17) | (y4 > 17)) {
+      return false;
+    }
+
+    let row = matrix[y1];
+    if (row[x1] = 2) {
+      return false;
+    }
+
+    let row = matrix[y2];
+    if (row[x2] = 2) {
+      return false;
+    }
+
+    let row = matrix[y3];
+    if (row[x3] = 2) {
+      return false;
+    }
+
+    let row = matrix[y4];
+    if (row[x4] = 2) {
+      return false;
+    }
+
+    return true;
+  }
+
+  method void setValueForCell(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, int value) {
+    var Array row;
+
+    let row = matrix[y1];
+    let row[x1] = value;
+
+    let row = matrix[y2];
+    let row[x2] = value;
+
+    let row = matrix[y3];
+    let row[x3] = value;
+
+    let row = matrix[y4];
+    let row[x4] = value;
+
+    return;
+  }
+
+  method void leavePiece() {
+    do setValueForCell(pivotBlockX, pivotBlockY, block2X, block2Y, block3X, block3Y, block4X, block4Y, 2);
+
+    let pivotBlockX = 0;
+    let pivotBlockY = 0;
+    let block2X = 0;
+    let block2Y = 0;
+    let block3X = 0;
+    let block3Y = 0;
+    let block4X = 0;
+    let block4Y = 0;
+
+    return;
+  }
+
+  method void draw() {
+    var int i;
+    var int j;
+    var int value;
+    var int xOffset;
+    var int yOffset;
+    var Array row;
+
+    let i = 2;
+    let yOffset = 0;
+
+    while (i < 18) {
+      let row = matrix[i];
+      let xOffset = 192;
+      let j = 0;
+
+      while (j < 8) {
+        let value = row[j];
+
+        if (value = 0) {
+          do Screen.setColor(false);
+        } else {
+          do Screen.setColor(true);
+        }
+
+        do Screen.drawRectangle(xOffset, yOffset, xOffset + 14, yOffset + 14);
+
+        let xOffset = xOffset + 16;
+        let j = j + 1;
+      }
+
+      let yOffset = yOffset + 16;
+      let i = i + 1;
+    }
+
+    return;
+  }
+
+  method int handleCompletedRows() {
+    var int i;
+    var int j;
+    var int k;
+    var int l;
+    var Array row;
+    var Array topRow;
+    var int countFilledCells;
+    var int score;
+
+    let score = 0;
+
+    let i = 17;
+
+    while (i > -1) {
+      let row = matrix[i];
+
+      let j = 0;
+      let countFilledCells = 0;
+
+      while (j < 8) {
+        if (row[j] = 2) {
+          let countFilledCells = countFilledCells + 1;
+        }
+
+        let j = j + 1;
+      }
+
+      if (countFilledCells = 8) {
+        let score = score + 1;
+
+        let k = i;
+
+        while (k > 0) {
+          let row = matrix[k];
+          let topRow = matrix[k - 1];
+
+          let l = 0;
+          while (l < 8) {
+            let row[l] = topRow[l];
+            let topRow[l] = 0;
+
+            let l = l + 1;
+          }
+
+          let k = k - 1;
+        }
+      } else {
+        let i = i - 1;
+      }
+    }
+
+    return score;
+  }
+
+  method void dispose() {
+    var int i;
+    var Array row;
+
+    let i = 0;
+
+    while (i < 18) {
+      let row = matrix[i];
+      do row.dispose();
+      let i = i + 1;
+    }
+
+    do matrix.dispose();
+
+    do Memory.deAlloc(this);
+
+    return;
+  }
+
+}

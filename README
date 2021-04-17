@@ -1,0 +1,1 @@
+This compiler is for simple programming language Jack (more details https://www.nand2tetris.org). This compiler generates bytecode for a stack-based VM. The folder tetris contains code of simple game. This project is done in spare time just for fun.
